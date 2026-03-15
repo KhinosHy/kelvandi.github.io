@@ -1,0 +1,1077 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>MyWeb — Kelvandi</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Space+Mono:ital,wght@0,400;0,700;1,400&family=Unbounded:wght@300;700;900&display=swap" rel="stylesheet" />
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --bg: #0e0d09;
+      --paper: #f5f0e8;
+      --ink: #1a1814;
+      --red: #d94f3d;
+      --yellow: #e8c84a;
+      --green: #4a8c5c;
+      --blue: #3d6b9e;
+      --mono: 'Space Mono', monospace;
+      --display: 'Unbounded', sans-serif;
+    }
+
+    html { scroll-behavior: smooth; }
+
+    body {
+      background: var(--bg);
+      color: var(--paper);
+      font-family: var(--mono);
+      overflow-x: hidden;
+      cursor: crosshair;
+    }
+
+    /* ── NOISE OVERLAY ── */
+    body::before {
+      content: '';
+      position: fixed;
+      inset: 0;
+      background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.75' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.04'/%3E%3C/svg%3E");
+      pointer-events: none;
+      z-index: 9999;
+      opacity: 0.4;
+    }
+
+    /* ── NAV ── */
+    nav {
+      position: fixed;
+      top: 0; left: 0; right: 0;
+      z-index: 100;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 1.2rem 3rem;
+      border-bottom: 1px solid rgba(245,240,232,0.08);
+      backdrop-filter: blur(8px);
+      background: rgba(14,13,9,0.7);
+    }
+
+    .nav-logo {
+      font-family: var(--display);
+      font-weight: 900;
+      font-size: 0.85rem;
+      letter-spacing: 0.1em;
+      color: var(--yellow);
+      text-transform: uppercase;
+    }
+
+    .nav-links {
+      display: flex;
+      gap: 2.5rem;
+      list-style: none;
+    }
+
+    .nav-links a {
+      font-size: 0.7rem;
+      letter-spacing: 0.15em;
+      text-transform: uppercase;
+      color: var(--paper);
+      text-decoration: none;
+      opacity: 0.6;
+      transition: opacity 0.2s, color 0.2s;
+    }
+
+    .nav-links a:hover { opacity: 1; color: var(--yellow); }
+
+    /* ── HERO ── */
+    #hero {
+      min-height: 100vh;
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      padding: 0 3rem;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .hero-left {
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      padding-top: 6rem;
+      z-index: 2;
+    }
+
+    .hero-tag {
+      font-size: 0.65rem;
+      letter-spacing: 0.2em;
+      text-transform: uppercase;
+      color: var(--red);
+      margin-bottom: 1.5rem;
+      display: flex;
+      align-items: center;
+      gap: 0.8rem;
+    }
+
+    .hero-tag::before {
+      content: '';
+      display: block;
+      width: 2rem;
+      height: 1px;
+      background: var(--red);
+    }
+
+    .hero-name {
+      font-family: var(--display);
+      font-weight: 900;
+      font-size: clamp(3rem, 6vw, 5.5rem);
+      line-height: 0.95;
+      text-transform: uppercase;
+      letter-spacing: -0.02em;
+      margin-bottom: 2rem;
+    }
+
+    .hero-name .line-2 {
+      color: var(--yellow);
+      -webkit-text-stroke: 0px;
+    }
+
+    .hero-name .outline {
+      -webkit-text-stroke: 1.5px var(--paper);
+      color: transparent;
+    }
+
+    .hero-desc {
+      font-size: 0.78rem;
+      line-height: 1.9;
+      opacity: 0.6;
+      max-width: 340px;
+      margin-bottom: 3rem;
+    }
+
+    .hero-btns {
+      display: flex;
+      gap: 1rem;
+      flex-wrap: wrap;
+    }
+
+    .btn {
+      font-family: var(--mono);
+      font-size: 0.7rem;
+      letter-spacing: 0.15em;
+      text-transform: uppercase;
+      padding: 0.85rem 2rem;
+      text-decoration: none;
+      border: 1px solid;
+      transition: all 0.25s;
+      cursor: pointer;
+    }
+
+    .btn-primary {
+      background: var(--yellow);
+      color: var(--ink);
+      border-color: var(--yellow);
+    }
+
+    .btn-primary:hover {
+      background: transparent;
+      color: var(--yellow);
+    }
+
+    .btn-ghost {
+      background: transparent;
+      color: var(--paper);
+      border-color: rgba(245,240,232,0.3);
+    }
+
+    .btn-ghost:hover {
+      border-color: var(--paper);
+      background: rgba(245,240,232,0.05);
+    }
+
+    .hero-right {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      position: relative;
+    }
+
+    .hero-graphic {
+      position: relative;
+      width: 320px;
+      height: 320px;
+    }
+
+    .circle-outer {
+      position: absolute;
+      inset: 0;
+      border: 1px solid rgba(245,240,232,0.12);
+      border-radius: 50%;
+      animation: spin 20s linear infinite;
+    }
+
+    .circle-dashed {
+      position: absolute;
+      inset: 30px;
+      border: 1px dashed rgba(232,200,74,0.25);
+      border-radius: 50%;
+      animation: spin 12s linear infinite reverse;
+    }
+
+    .circle-inner {
+      position: absolute;
+      inset: 70px;
+      background: rgba(217,79,61,0.08);
+      border: 1px solid var(--red);
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .avatar-placeholder {
+      font-family: var(--display);
+      font-size: 0.55rem;
+      letter-spacing: 0.2em;
+      text-transform: uppercase;
+      color: var(--red);
+      text-align: center;
+      line-height: 2;
+    }
+
+    .hero-decoration {
+      position: absolute;
+      font-family: var(--display);
+      font-size: 0.5rem;
+      letter-spacing: 0.2em;
+      opacity: 0.3;
+      text-transform: uppercase;
+      white-space: nowrap;
+    }
+
+    .deco-top { top: 30%; left: -20px; writing-mode: vertical-rl; }
+    .deco-bottom { bottom: 30%; right: -20px; writing-mode: vertical-rl; }
+
+    @keyframes spin { to { transform: rotate(360deg); } }
+
+    .hero-scroll {
+      position: absolute;
+      bottom: 2.5rem;
+      left: 50%;
+      transform: translateX(-50%);
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 0.5rem;
+      font-size: 0.6rem;
+      letter-spacing: 0.2em;
+      text-transform: uppercase;
+      opacity: 0.4;
+    }
+
+    .scroll-line {
+      width: 1px;
+      height: 40px;
+      background: var(--paper);
+      animation: scrollDown 1.8s ease-in-out infinite;
+    }
+
+    @keyframes scrollDown {
+      0% { transform: scaleY(0); transform-origin: top; }
+      50% { transform: scaleY(1); transform-origin: top; }
+      51% { transform: scaleY(1); transform-origin: bottom; }
+      100% { transform: scaleY(0); transform-origin: bottom; }
+    }
+
+    /* ── SECTION BASE ── */
+    section {
+      padding: 7rem 3rem;
+      position: relative;
+    }
+
+    .section-label {
+      font-size: 0.6rem;
+      letter-spacing: 0.25em;
+      text-transform: uppercase;
+      color: var(--red);
+      margin-bottom: 1rem;
+      display: flex;
+      align-items: center;
+      gap: 1rem;
+    }
+
+    .section-label::after {
+      content: '';
+      flex: 1;
+      max-width: 3rem;
+      height: 1px;
+      background: var(--red);
+    }
+
+    .section-title {
+      font-family: var(--display);
+      font-weight: 700;
+      font-size: clamp(2rem, 4vw, 3.5rem);
+      text-transform: uppercase;
+      line-height: 1;
+      margin-bottom: 4rem;
+    }
+
+    /* ── ABOUT ── */
+    #about {
+      border-top: 1px solid rgba(245,240,232,0.08);
+    }
+
+    .about-grid {
+      display: grid;
+      grid-template-columns: 1.2fr 0.8fr;
+      gap: 5rem;
+      align-items: start;
+    }
+
+    .about-text p {
+      font-size: 0.85rem;
+      line-height: 2;
+      opacity: 0.7;
+      margin-bottom: 1.5rem;
+    }
+
+    .about-text p strong {
+      color: var(--yellow);
+      font-weight: 700;
+    }
+
+    .about-stack {
+      margin-top: 3rem;
+    }
+
+    .stack-label {
+      font-size: 0.6rem;
+      letter-spacing: 0.2em;
+      text-transform: uppercase;
+      opacity: 0.4;
+      margin-bottom: 1rem;
+    }
+
+    .stack-tags {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.5rem;
+    }
+
+    .tag {
+      font-size: 0.65rem;
+      letter-spacing: 0.1em;
+      padding: 0.4rem 0.8rem;
+      border: 1px solid rgba(245,240,232,0.2);
+      text-transform: uppercase;
+      transition: all 0.2s;
+    }
+
+    .tag:hover {
+      border-color: var(--yellow);
+      color: var(--yellow);
+    }
+
+    .about-sidebar {
+      border: 1px solid rgba(245,240,232,0.1);
+      padding: 2rem;
+    }
+
+    .sidebar-item {
+      padding: 1.2rem 0;
+      border-bottom: 1px solid rgba(245,240,232,0.06);
+    }
+
+    .sidebar-item:last-child { border-bottom: none; }
+
+    .sidebar-num {
+      font-family: var(--display);
+      font-size: 1.8rem;
+      font-weight: 900;
+      color: var(--yellow);
+      line-height: 1;
+    }
+
+    .sidebar-desc {
+      font-size: 0.65rem;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      opacity: 0.5;
+      margin-top: 0.3rem;
+    }
+
+    /* ── PROJECTS ── */
+    #projects {
+      background: rgba(245,240,232,0.02);
+      border-top: 1px solid rgba(245,240,232,0.08);
+    }
+
+    .projects-list {
+      display: flex;
+      flex-direction: column;
+      gap: 0;
+    }
+
+    .project-item {
+      display: grid;
+      grid-template-columns: 60px 1fr auto;
+      align-items: center;
+      gap: 2rem;
+      padding: 2rem 0;
+      border-bottom: 1px solid rgba(245,240,232,0.08);
+      cursor: pointer;
+      transition: background 0.2s;
+      position: relative;
+    }
+
+    .project-item::before {
+      content: '';
+      position: absolute;
+      left: -3rem;
+      right: -3rem;
+      top: 0; bottom: 0;
+      background: rgba(232,200,74,0.03);
+      opacity: 0;
+      transition: opacity 0.2s;
+    }
+
+    .project-item:hover::before { opacity: 1; }
+
+    .project-num {
+      font-family: var(--display);
+      font-size: 0.65rem;
+      font-weight: 700;
+      color: var(--red);
+      opacity: 0.6;
+    }
+
+
+
+    .project-title {
+      font-family: var(--display);
+      font-size: 1.1rem;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.02em;
+      margin-bottom: 0.4rem;
+      transition: color 0.2s;
+    }
+
+    .project-item:hover .project-title { color: var(--yellow); }
+
+    .project-meta {
+      font-size: 0.65rem;
+      opacity: 0.45;
+      letter-spacing: 0.1em;
+    }
+
+    .project-tags-list {
+      display: flex;
+      gap: 0.5rem;
+    }
+
+    .project-tag {
+      font-size: 0.58rem;
+      letter-spacing: 0.1em;
+      padding: 0.25rem 0.6rem;
+      border: 1px solid rgba(245,240,232,0.15);
+      text-transform: uppercase;
+      white-space: nowrap;
+    }
+
+    .project-arrow {
+      width: 32px;
+      height: 32px;
+      border: 1px solid rgba(245,240,232,0.2);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 0.9rem;
+      transition: all 0.2s;
+      flex-shrink: 0;
+    }
+
+    .project-item:hover .project-arrow {
+      background: var(--yellow);
+      color: var(--ink);
+      border-color: var(--yellow);
+    }
+
+    /* ── GALLERY (hidden section) ── */
+    #gallery {
+      border-top: 1px solid rgba(245,240,232,0.08);
+      position: relative;
+    }
+
+    .gallery-intro {
+      font-size: 0.78rem;
+      line-height: 1.9;
+      opacity: 0.55;
+      max-width: 480px;
+      margin-bottom: 3rem;
+    }
+
+    .gallery-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 1px;
+      background: rgba(245,240,232,0.06);
+    }
+
+    .gallery-cell {
+      position: relative;
+      aspect-ratio: 1;
+      overflow: hidden;
+      background: var(--bg);
+      cursor: pointer;
+    }
+
+    .gallery-cell img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      filter: grayscale(60%) contrast(1.1);
+      transition: filter 0.4s, transform 0.5s;
+      display: block;
+    }
+
+    .gallery-cell:hover img {
+      filter: grayscale(0%) contrast(1);
+      transform: scale(1.04);
+    }
+
+    .gallery-cell-overlay {
+      position: absolute;
+      inset: 0;
+      background: linear-gradient(to top, rgba(14,13,9,0.85) 0%, transparent 60%);
+      opacity: 0;
+      transition: opacity 0.3s;
+      display: flex;
+      flex-direction: column;
+      justify-content: flex-end;
+      padding: 1.2rem;
+    }
+
+    .gallery-cell:hover .gallery-cell-overlay { opacity: 1; }
+
+    .gallery-cell-title {
+      font-family: var(--display);
+      font-size: 0.65rem;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.12em;
+      color: var(--paper);
+    }
+
+    .gallery-cell-sub {
+      font-size: 0.58rem;
+      letter-spacing: 0.1em;
+      opacity: 0.6;
+      text-transform: uppercase;
+      margin-top: 0.2rem;
+    }
+
+    /* placeholder gradient images */
+    .gallery-cell:nth-child(1) .img-ph { background: linear-gradient(135deg, #1a1228 0%, #3d2060 50%, #7a3fad 100%); }
+    .gallery-cell:nth-child(2) .img-ph { background: linear-gradient(135deg, #0d1f1a 0%, #1a4a38 50%, #2d8c6a 100%); }
+    .gallery-cell:nth-child(3) .img-ph { background: linear-gradient(135deg, #1f0d0a 0%, #5a1a14 50%, #c0392b 100%); }
+    .gallery-cell:nth-child(4) .img-ph { background: linear-gradient(135deg, #0d1520 0%, #1a3a5c 50%, #2e6da4 100%); }
+    .gallery-cell:nth-child(5) .img-ph { background: linear-gradient(135deg, #1f1a0a 0%, #5c4a14 50%, #c0952b 100%); }
+    .gallery-cell:nth-child(6) .img-ph { background: linear-gradient(135deg, #0f0f14 0%, #2a2848 50%, #5a568c 100%); }
+
+    .img-ph {
+      width: 100%;
+      height: 100%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 0.55rem;
+      letter-spacing: 0.2em;
+      text-transform: uppercase;
+      opacity: 0.5;
+      flex-direction: column;
+      gap: 0.5rem;
+    }
+
+    .img-ph-icon { font-size: 1.5rem; opacity: 0.4; }
+
+    /* LIGHTBOX */
+    .lightbox {
+      position: fixed;
+      inset: 0;
+      background: rgba(14,13,9,0.97);
+      z-index: 200;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      opacity: 0;
+      pointer-events: none;
+      transition: opacity 0.3s;
+    }
+
+    .lightbox.open {
+      opacity: 1;
+      pointer-events: all;
+    }
+
+    .lightbox-inner {
+      max-width: 80vw;
+      max-height: 80vh;
+      position: relative;
+      text-align: center;
+    }
+
+    .lightbox-inner img, .lightbox-inner .img-ph {
+      max-width: 80vw;
+      max-height: 70vh;
+      object-fit: contain;
+      width: 500px;
+      height: 400px;
+    }
+
+    .lightbox-close {
+      position: absolute;
+      top: -3rem;
+      right: 0;
+      background: none;
+      border: 1px solid rgba(245,240,232,0.3);
+      color: var(--paper);
+      font-family: var(--mono);
+      font-size: 0.65rem;
+      letter-spacing: 0.15em;
+      padding: 0.5rem 1rem;
+      cursor: pointer;
+      text-transform: uppercase;
+      transition: all 0.2s;
+    }
+
+    .lightbox-close:hover { background: var(--red); border-color: var(--red); }
+
+    .lightbox-caption {
+      margin-top: 1.5rem;
+    }
+
+    .lightbox-caption-title {
+      font-family: var(--display);
+      font-size: 0.9rem;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.1em;
+    }
+
+    .lightbox-caption-sub {
+      font-size: 0.65rem;
+      opacity: 0.5;
+      letter-spacing: 0.15em;
+      text-transform: uppercase;
+      margin-top: 0.4rem;
+    }
+
+    /* ── FOOTER ── */
+    footer {
+      border-top: 1px solid rgba(245,240,232,0.08);
+      padding: 3rem;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .footer-left {
+      font-family: var(--display);
+      font-size: 0.65rem;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.12em;
+      opacity: 0.4;
+    }
+
+    .footer-links {
+      display: flex;
+      gap: 2rem;
+    }
+
+    .footer-links a {
+      font-size: 0.65rem;
+      letter-spacing: 0.15em;
+      text-transform: uppercase;
+      color: var(--paper);
+      text-decoration: none;
+      opacity: 0.4;
+      transition: opacity 0.2s;
+    }
+
+    .footer-links a:hover { opacity: 1; }
+
+    .footer-dot {
+      width: 8px; height: 8px;
+      background: var(--yellow);
+      border-radius: 50%;
+      animation: pulse 2s ease-in-out infinite;
+    }
+
+    @keyframes pulse {
+      0%, 100% { opacity: 1; transform: scale(1); }
+      50% { opacity: 0.4; transform: scale(0.7); }
+    }
+
+    /* ── ANIMATIONS ON LOAD ── */
+    .fade-in {
+      opacity: 0;
+      transform: translateY(20px);
+      transition: opacity 0.7s ease, transform 0.7s ease;
+    }
+
+    .fade-in.visible {
+      opacity: 1;
+      transform: none;
+    }
+
+    /* ── RESPONSIVE ── */
+    @media (max-width: 768px) {
+      nav { padding: 1rem 1.5rem; }
+      .nav-links { display: none; }
+      #hero { grid-template-columns: 1fr; padding: 0 1.5rem; }
+      .hero-right { display: none; }
+      section { padding: 5rem 1.5rem; }
+      .about-grid { grid-template-columns: 1fr; gap: 3rem; }
+      .project-item { grid-template-columns: 40px 1fr; }
+      .project-tags-list { display: none; }
+      .gallery-grid { grid-template-columns: repeat(2, 1fr); }
+      footer { flex-direction: column; gap: 1.5rem; text-align: center; }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- NAV -->
+  <nav>
+    <div class="nav-logo">Kelvandi.dev</div>
+    <ul class="nav-links">
+      <li><a href="#about">About</a></li>
+      <li><a href="#projects">Projects</a></li>
+      <li><a href="#gallery">Gallery</a></li>
+      <li><a href="mailto:didikelvandi455@gmail.com">Contact</a></li>
+    </ul>
+  </nav>
+
+  <!-- HERO -->
+  <section id="hero">
+    <div class="hero-left">
+      <div class="hero-tag">Available for work · 2025</div>
+      <h1 class="hero-name">
+        <div>Full</div>
+        <div class="line-2">Stack</div>
+        <div class="outline">Dev.</div>
+      </h1>
+      <p class="hero-desc">
+        I build things for the web — from pixel-perfect interfaces to scalable back-end systems. 
+        Based somewhere with good coffee.
+      </p>
+      <div class="hero-btns">
+        <a href="#projects" class="btn btn-primary">View Work</a>
+        <a href="mailto:didikelvandi455@gmail.com" class="btn btn-ghost">Get in Touch</a>
+      </div>
+    </div>
+    <div class="hero-right">
+      <div class="hero-graphic">
+        <div class="circle-outer"></div>
+        <div class="circle-dashed"></div>
+        <div class="circle-inner">
+          <div class="avatar-placeholder">
+            <span> <img src="bookstore.jpg" alt="Your Name"> </span>
+          </div>
+        </div>
+        <span class="hero-decoration deco-top">Web Developer · Designer</span>
+        <span class="hero-decoration deco-bottom">Open Source · Creative</span>
+      </div>
+    </div>
+    <div class="hero-scroll">
+      <div class="scroll-line"></div>
+      <span>scroll</span>
+    </div>
+  </section>
+
+  <!-- ABOUT -->
+  <section id="about">
+    <div class="section-label">01 — About me</div>
+    <h2 class="section-title fade-in">Who<br/>I am.</h2>
+    <div class="about-grid fade-in">
+      <div class="about-text">
+        <p>
+          Hey — I'm <strong>Kelvandi</strong>, a compsci student with a love for clean systems, 
+          unusual interfaces, and software that actually makes sense. I've been writing code 
+          regularly for <strong>a year</strong>, working across personal projects for fun.
+        </p>
+        <p>
+          I care about the craft: thoughtful architecture, readable code, and UIs that feel 
+          considered. When I'm not shipping features, I'm usually tinkering with generative art, 
+          reading about programming languages, or making something purely for fun.
+        </p>
+        <p>
+          Currently open to <strong>collaborate and seek strong work relations</strong>.
+        </p>
+        <div class="about-stack">
+          <div class="stack-label">Current stack</div>
+          <div class="stack-tags">
+            <span class="tag">TypeScript</span>
+            <span class="tag">React</span>
+            <span class="tag">Node.js</span>
+            <span class="tag">PostgreSQL</span>
+            <span class="tag">Docker</span>
+            <span class="tag">Go</span>
+            <span class="tag">Redis</span>
+            <span class="tag">AWS</span>
+          </div>
+        </div>
+      </div>
+      <div class="about-sidebar">
+        <div class="sidebar-item">
+          <div class="sidebar-num">1</div>
+          <div class="sidebar-desc">Year of experience</div>
+        </div>
+        <div class="sidebar-item">
+          <div class="sidebar-num">1</div>
+          <div class="sidebar-desc">Projects shipped</div>
+        </div>
+        <div class="sidebar-item">
+          <div class="sidebar-num">0</div>
+          <div class="sidebar-desc">Open source repos</div>
+        </div>
+        <div class="sidebar-item">
+          <div class="sidebar-num">∞</div>
+          <div class="sidebar-desc">Cups of coffee</div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- PROJECTS -->
+  <section id="projects">
+    <div class="section-label">02 — Work</div>
+    <h2 class="section-title fade-in">Selected<br/>Projects.</h2>
+    <div class="projects-list fade-in">
+
+      <div class="project-item" onclick="window.open('#','_blank')">
+        <div class="project-num">001</div>
+        <div class="project-info">
+          <div class="project-title">Project Alpha</div>
+          <div class="project-meta">2024 · SaaS Platform</div>
+        </div>
+        <div class="project-tags-list">
+          <span class="project-tag">React</span>
+          <span class="project-tag">Node</span>
+          <span class="project-tag">Postgres</span>
+        </div>
+        <div class="project-arrow">↗</div>
+      </div>
+
+      <div class="project-item" onclick="window.open('#','_blank')">
+        <div class="project-num">002</div>
+        <div class="project-info">
+          <div class="project-title">Open Source Tool</div>
+          <div class="project-meta">2024 · Developer Tool</div>
+        </div>
+        <div class="project-tags-list">
+          <span class="project-tag">Go</span>
+          <span class="project-tag">CLI</span>
+          <span class="project-tag">Open Source</span>
+        </div>
+        <div class="project-arrow">↗</div>
+      </div>
+
+      <div class="project-item" onclick="window.open('#','_blank')">
+        <div class="project-num">003</div>
+        <div class="project-info">
+          <div class="project-title">Creative Experiment</div>
+          <div class="project-meta">2023 · Generative Art</div>
+        </div>
+        <div class="project-tags-list">
+          <span class="project-tag">Canvas API</span>
+          <span class="project-tag">WebGL</span>
+        </div>
+        <div class="project-arrow">↗</div>
+      </div>
+
+      <div class="project-item" onclick="window.open('#','_blank')">
+        <div class="project-num">004</div>
+        <div class="project-info">
+          <div class="project-title">E-Commerce Rebuild</div>
+          <div class="project-meta">2023 · Client Work</div>
+        </div>
+        <div class="project-tags-list">
+          <span class="project-tag">Next.js</span>
+          <span class="project-tag">Stripe</span>
+          <span class="project-tag">CMS</span>
+        </div>
+        <div class="project-arrow">↗</div>
+      </div>
+
+      <div class="project-item" onclick="window.open('#','_blank')">
+        <div class="project-num">005</div>
+        <div class="project-info">
+          <div class="project-title">Internal Dashboard</div>
+          <div class="project-meta">2022 · Analytics Tool</div>
+        </div>
+        <div class="project-tags-list">
+          <span class="project-tag">Python</span>
+          <span class="project-tag">FastAPI</span>
+          <span class="project-tag">D3.js</span>
+        </div>
+        <div class="project-arrow">↗</div>
+      </div>
+
+    </div>
+  </section>
+
+  <!-- GALLERY (hidden section) -->
+  <section id="gallery">
+    <div class="section-label">03 — Things I like</div>
+    <h2 class="section-title fade-in">A Hidden<br/>Cabinet.</h2>
+    <p class="gallery-intro fade-in">
+      this is my little corner for sharing photos, art, and other visual things that inspire me.
+    </p>
+
+    <div class="gallery-grid fade-in">
+
+      <div class="gallery-cell" onclick="openLightbox(0)">
+        <div class="img-ph">
+          <!-- Replace with: <img src="your-image.jpg" alt="..."> -->
+          <span class="img-ph-icon">🌆</span>
+          <span><img src="japannight.jpg" alt="City at night"></span>
+        </div>
+        <div class="gallery-cell-overlay">
+          <div class="gallery-cell-title">City at night</div>
+          <div class="gallery-cell-sub">Photography · 2024</div>
+        </div>
+      </div>
+
+      <div class="gallery-cell" onclick="openLightbox(1)">
+        <div class="img-ph">
+          <span class="img-ph-icon">🌿</span>
+          <span><img src="greenstore.jpg" alt="Something green"></span>
+        </div>
+        <div class="gallery-cell-overlay">
+          <div class="gallery-cell-title">Something green</div>
+          <div class="gallery-cell-sub">Nature · 2024</div>
+        </div>
+      </div>
+
+      <div class="gallery-cell" onclick="openLightbox(2)">
+        <div class="img-ph">
+          <span class="img-ph-icon">🔴</span>
+          <span><img src="bookstore.jpg" alt="Bookstore"></span>
+        </div>
+        <div class="gallery-cell-overlay">
+          <div class="gallery-cell-title">Old-Brary</div>
+          <div class="gallery-cell-sub">Abstract · 2023</div>
+        </div>
+      </div>
+
+      <div class="gallery-cell" onclick="openLightbox(3)">
+        <div class="img-ph">
+          <span class="img-ph-icon">🌊</span>
+          <span><img src="bluesky.jpg" alt="Deep blue"></span>
+        </div>
+        <div class="gallery-cell-overlay">
+          <div class="gallery-cell-title">Deep water</div>
+          <div class="gallery-cell-sub">Found · 2023</div>
+        </div>
+      </div>
+
+      <div class="gallery-cell" onclick="openLightbox(4)">
+        <div class="img-ph">
+          <span class="img-ph-icon">🌄</span>
+          <span><img src="goldenhr.jpg" alt="Golden hour"></span>
+        </div>
+        <div class="gallery-cell-overlay">
+          <div class="gallery-cell-title">Golden hour</div>
+          <div class="gallery-cell-sub">Landscape · 2023</div>
+        </div>
+      </div>
+
+      <div class="gallery-cell" onclick="openLightbox(5)">
+        <div class="img-ph">
+          <span class="img-ph-icon">🔮</span>
+          <span><img src="softnights.jpg" alt="Soft nightsy"></span>
+        </div>
+        <div class="gallery-cell-overlay">
+          <div class="gallery-cell-title">Soft nightsy</div>
+          <div class="gallery-cell-sub">Digital · 2022</div>
+        </div>
+      </div>
+
+    </div>
+  </section>
+
+  <!-- LIGHTBOX -->
+  <div class="lightbox" id="lightbox" onclick="closeLightbox()">
+    <div class="lightbox-inner" onclick="event.stopPropagation()">
+      <button class="lightbox-close" onclick="closeLightbox()">✕ Close</button>
+      <div id="lightbox-img"></div>
+      <div class="lightbox-caption">
+        <div class="lightbox-caption-title" id="lightbox-title"></div>
+        <div class="lightbox-caption-sub" id="lightbox-sub"></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- FOOTER -->
+  <footer>
+    <div class="footer-left">© 2025 Your Name</div>
+    <div class="footer-links">
+      <a href="https://github.com/" target="_blank">GitHub</a>
+      <a href="https://linkedin.com/" target="_blank">LinkedIn</a>
+      <a href="mailto:didikelvandi455@gmail.com">Email</a>
+    </div>
+    <div class="footer-dot"></div>
+  </footer>
+
+  <script>
+    // ── INTERSECTION OBSERVER FOR FADE-IN ──
+    const faders = document.querySelectorAll('.fade-in');
+    const observer = new IntersectionObserver((entries) => {
+      entries.forEach((entry, i) => {
+        if (entry.isIntersecting) {
+          setTimeout(() => entry.target.classList.add('visible'), i * 80);
+          observer.unobserve(entry.target);
+        }
+      });
+    }, { threshold: 0.1 });
+    faders.forEach(el => observer.observe(el));
+
+    // ── GALLERY DATA ──
+    const galleryData = 
+    [
+      { title: 'City at night',    sub: 'Photography · 2024', bg: 'linear-gradient(135deg, #1a1228 0%, #3d2060 50%, #7a3fad 100%)' },
+      { title: 'Something green',  sub: 'Nature · 2024',      bg: 'linear-gradient(135deg, #0d1f1a 0%, #1a4a38 50%, #2d8c6a 100%)' },
+      { title: 'Red study',        sub: 'Abstract · 2023',    bg: 'linear-gradient(135deg, #1f0d0a 0%, #5a1a14 50%, #c0392b 100%)' },
+      { title: 'Deep water',       sub: 'Found · 2023',       bg: 'linear-gradient(135deg, #0d1520 0%, #1a3a5c 50%, #2e6da4 100%)' },
+      { title: 'Golden hour',      sub: 'Landscape · 2023',   bg: 'linear-gradient(135deg, #1f1a0a 0%, #5c4a14 50%, #c0952b 100%)' },
+      { title: 'Soft geometry',    sub: 'Digital · 2022',     bg: 'linear-gradient(135deg, #0f0f14 0%, #2a2848 50%, #5a568c 100%)' },
+    ];
+
+    function openLightbox(idx) {
+      const lb = document.getElementById('lightbox');
+      const data = galleryData[idx];
+      document.getElementById('lightbox-title').textContent = data.title;
+      document.getElementById('lightbox-sub').textContent = data.sub;
+      // Show placeholder — replace with <img> src if you have real images
+      document.getElementById('lightbox-img').innerHTML =
+        `<div class="img-ph" style="background:${data.bg};width:500px;height:360px;border-radius:2px;">
+           <span style="font-size:3rem;opacity:0.3">🖼</span>
+           <span><img src="" alt="${data.title}"></span>
+         </div>`;
+      lb.classList.add('open');
+      document.body.style.overflow = 'hidden';
+    }
+
+    function closeLightbox() {
+      document.getElementById('lightbox').classList.remove('open');
+      document.body.style.overflow = '';
+    }
+
+    document.addEventListener('keydown', e => { if (e.key === 'Escape') closeLightbox(); });
+  </script>
+</body>
+</html>
